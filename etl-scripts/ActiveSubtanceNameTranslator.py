@@ -1,15 +1,46 @@
+# -*- coding: utf-8 -*-
 import scrapy
 from scrapy.linkextractors import LinkExtractor
+from scrapy.crawler import CrawlerProcess
 
 
-class ActiveSubstanceTranslationItem(scrapy.Item):
-    countryId = scrapy.Field()
-    name = scrapy.Field()
-    activeSubstanceId = scrapy.Field()
+class ActiveSubstanceNameTranslationsItem(scrapy.Item):
+    latinName = scrapy.Field()
+    frenchName = scrapy.Field()
+    chineseName = scrapy.Field()
+    englishName = scrapy.Field()
+    spanishName = scrapy.Field()
+    russianName = scrapy.Field()
+    arabicName = scrapy.Field()
+    americanName = scrapy.Field()
 
 
 class INNSpider(scrapy.Spider):
     name = "inn_spider"
+
+    def __init__(self, language=None, substance=None):
+        # do something else, don't care about the args
+        if(language == "french"):
+            self.language = 'INNF'
+        elif(language == "english"):
+            self.language = "INNE"
+        elif(language == "chinese"):
+            self.language = "INNCH"
+        elif(language == "spanish"):
+            self.language = "INNS"
+        elif(language == "arabic"):
+            self.language = "INNA"
+        elif(language == "russian"):
+            self.language = "INNR"
+        elif(language == "latin"):
+            self.language = "INN"
+        elif(language == "american"):
+            self.language = "INNUS"
+        else:
+            #TODO retourner une erreur
+            pass
+
+        self.substance = substance.lower()
 
     def start_requests(self):
         return [scrapy.FormRequest("https://mednet-communities.net/inn/login",
@@ -17,12 +48,45 @@ class INNSpider(scrapy.Spider):
                                    callback=self.logged_in)]
 
     def logged_in(self, response):
-        url = 'https://mednet-communities.net/inn/db/searchinn.aspx?ctl00$rightcolumn$optionType=1&ctl00$rightcolumn$option=1&ctl00$rightcolumn$Name=' + self.substance + '&ctl00$rightcolumn$language=' + self.language + '&ctl00$rightcolumn$proposedList=Select one&ctl00$rightcolumn$recommendedList=Select one&ctl00$rightcolumn$searchButton=Search&__VIEWSTATE=%2FwEPDwUJNzg0NjUzOTA4ZGQEej1%2FLKWwfDL1B4IMtn3hnu4TLw%3D%3D'
-        return scrapy.Request(url, self.get_active_substance_link)
+        if(self.language != "american"):
+            url = 'https://mednet-communities.net/inn/db/searchinn.aspx?ctl00$rightcolumn$optionType=1&ctl00$rightcolumn$option=1&ctl00$rightcolumn$Name=' + self.substance + '&ctl00$rightcolumn$language=' + self.language + '&ctl00$rightcolumn$proposedList=Select one&ctl00$rightcolumn$recommendedList=Select one&ctl00$rightcolumn$searchButton=Search&__VIEWSTATE=%2FwEPDwUJNzg0NjUzOTA4ZGQEej1%2FLKWwfDL1B4IMtn3hnu4TLw%3D%3D'
+            return scrapy.Request(url, self.get_active_substance_link)
+        else:
+            pass
+            #TODO gérer ces ricains
 
     def get_active_substance_link(self, response):
-        links = LinkExtractor(canonicalize=False, unique=False).extract_links(response)
-        return scrapy.Request(links[0].url, self.parse)
+        if(response.status == 200):
+            links = LinkExtractor(canonicalize=False, unique=False).extract_links(response)
+            if(links != []):
+                return scrapy.Request(links[0].url, self.parse)
+            else:
+                #TODO exception aucune substance trouvée, peut être tester d'abord avec l'alternate name
+                return False
+        else:
+            #TODO lever une exception
+            return False
 
     def parse(self, response):
-        scrapy.utils.response.open_in_browser(response)
+        active_substance_name_translations = ActiveSubstanceNameTranslationsItem()
+
+        active_substance_name_translations["latinName"] = response.css("#ctl00_rightcolumn_innForm_label0 ::text").extract_first()
+        active_substance_name_translations["frenchName"] = response.css("#ctl00_rightcolumn_innForm_Label2 ::text").extract_first()
+        active_substance_name_translations["spanishName"] = response.css("#ctl00_rightcolumn_innForm_Label4 ::text").extract_first()
+        active_substance_name_translations["russianName"] = response.css("#ctl00_rightcolumn_innForm_Label6 ::text").extract_first()
+        active_substance_name_translations["arabicName"] = response.css("#ctl00_rightcolumn_innForm_Label8 ::text").extract_first()
+        active_substance_name_translations["chineseName"] = response.css("#ctl00_rightcolumn_innForm_Label10 ::text").extract_first()
+
+        #for item in response.css(""):
+        #    active_substance_name_translations["americanName"] = ""
+        print(response.xpath('//table[@width="400px/font/text()"]').get())
+
+        # To remove
+        print(active_substance_name_translations)
+
+        return active_substance_name_translations
+
+
+process = CrawlerProcess()
+process.crawl(INNSpider, language='french', substance='paracétamol')
+process.start()
