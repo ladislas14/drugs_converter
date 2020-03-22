@@ -23,6 +23,7 @@ postgres://postgres:dphINdADpBFXsPENINBO@innov-project-dev.caem3dhjzb3n.ap-south
 ```
 
 
+## INN Credentials
 
-
-postgres://postgres:dphINdADpBFXsPENINBO@innov-project-dev.caem3dhjzb3n.ap-southeast-1.rds.amazonaws.com:5432/innov-project-dev
+Username : ```ladislas14@gmail.com```
+Password : ```P7qp6hAJS4pEfB7trd
