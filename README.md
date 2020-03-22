@@ -26,4 +26,4 @@ postgres://postgres:dphINdADpBFXsPENINBO@innov-project-dev.caem3dhjzb3n.ap-south
 ## INN Credentials
 
 Username : ```ladislas14@gmail.com```
-Password : ```P7qp6hAJS4pEfB7trd
+Password : ```P7qp6hAJS4pEfB7trd```
