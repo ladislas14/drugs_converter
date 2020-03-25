@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 requests = "*"
+lxml = "*"
+cssselect = "*"
 
 [requires]
 python_version = "3.6"
