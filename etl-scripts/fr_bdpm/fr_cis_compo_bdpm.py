@@ -18,7 +18,7 @@ with codecs.open(data_filename, 'rU', 'windows-1254') as data_txt:
                                       host="innov-project-dev.caem3dhjzb3n.ap-southeast-1.rds.amazonaws.com",
                                       port="5432",
                                       database="innov_project_dev")
-        connection.autocommit = True;
+        connection.autocommit = True
         cursor = connection.cursor()
 
         insert_sql = '''
