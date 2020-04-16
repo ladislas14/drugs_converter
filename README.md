@@ -19,7 +19,7 @@ http://lad-dev.team:8080/v1/graphql
 Url of the Postgres Database :
 
 ```bash
-postgres://postgres:dphINdADpBFXsPENINBO@innov-project-dev.caem3dhjzb3n.ap-southeast-1.rds.amazonaws.com:5432/innov-project-dev
+postgres://postgres:dphINdADpBFXsPENINBO@innov-project-dev.caem3dhjzb3n.ap-southeast-1.rds.amazonaws.com:5432/innov_project_dev
 ```
 
 
