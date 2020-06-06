@@ -4,6 +4,9 @@ import codecs
 import psycopg2
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Downloading first file which contain drugs main informations
 data_url = 'http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_bdpm.txt'
 data_filename = 'CIS_bdpm.txt'
@@ -13,14 +16,9 @@ with codecs.open(data_filename, 'rU', 'windows-1254') as data_txt:
     data = csv.reader(data_txt, delimiter='\t')
 
     try:
-        connection = psycopg2.connect(user="postgres",
-                                      password="dphINdADpBFXsPENINBO",
-                                      host="innov-project-dev.caem3dhjzb3n.ap-southeast-1.rds.amazonaws.com",
-                                      port="5432",
-                                      database="innov_project_dev")
-        connection.autocommit = True;
+        connection = psycopg2.connect('')
+        connection.autocommit = True
         cursor = connection.cursor()
-
 
         insert_sql = '''
            INSERT INTO fr_bdpm.cis_bdpm
