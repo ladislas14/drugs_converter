@@ -1,4 +1,4 @@
-INSERT INTO composition (quantity, unit, drug_id, active_substance_id)
+INSERT INTO composition (quantity, unit, drug_id, active_substance_id, reference)
 
 SELECT 
 CASE 
@@ -23,7 +23,12 @@ CASE
 	ELSE 'false'
 END,
 d.id,
-fr_bdpm.fr_inn_ingredients.id
+fr_bdpm.fr_inn_ingredients.id,
+CASE 
+	WHEN fr_cis_compo_bdpm."Référence de ce dosage" ~ 'un.*' THEN '1'
+	WHEN fr_cis_compo_bdpm."Référence de ce dosage" ~ '^[0-9]*\s+[a-zA-Z]*\s*.*$' THEN REGEXP_REPLACE(fr_cis_compo_bdpm."Référence de ce dosage",'^([0-9]*)\s+([a-zA-Z]*)\s*.*$', '\1 \2')
+	ELSE null
+END
 FROM fr_bdpm.fr_cis_compo_bdpm
 JOIN fr_bdpm.fr_inn_ingredients ON (fr_cis_compo_bdpm."Code de la substance" = fr_inn_ingredients.ingredient_id)
 JOIN drug d ON (d.source_id = fr_cis_compo_bdpm."Code CIS"::text)
